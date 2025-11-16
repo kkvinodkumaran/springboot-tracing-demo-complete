@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+
+  spring-app:
+    build: .
+    image: springboot-tracing-demo:latest
+    container_name: springboot-tracing
+    environment:
+      - OTEL_SERVICE_NAME=springboot-tracing-demo
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
+      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+      - OTEL_TRACES_EXPORTER=otlp
+    ports:
+      - "8080:8080"
+    depends_on:
+      - jaeger
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    container_name: jaeger
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
